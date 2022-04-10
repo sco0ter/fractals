@@ -1,8 +1,12 @@
 package fractals
 
+import kotlinx.coroutines.flow.flow
+
 class Fractal(private val function: (p: Complex) -> Function, private val maxIterations: Int, private val p1: Complex, private val p2: Complex) {
 
-    fun applyToImage(width: Int, height: Int, callback: (x: Int, y: Int, color: Int) -> Unit) {
+    class Result internal constructor(val x: Int, val y: Int, val color: Int)
+
+    fun applyToImage(width: Int, height: Int) = flow {
         val dx = (p2.re - p1.re) / (width - 1)
         val dy = (p2.im - p1.im) / (height - 1)
         var cx = p1.re
@@ -19,7 +23,7 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
                 val g = z
                 val b = z
                 val argb = (255 shl 24) or (r shl 16) or (g shl 8) or b
-                callback.invoke(x, y, argb)
+                emit(Result(x, y, argb))
             }
         }
     }
