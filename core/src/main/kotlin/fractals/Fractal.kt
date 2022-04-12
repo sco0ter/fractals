@@ -18,7 +18,7 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
 
             for (y in 0 until height) {
                 cy -= dy
-                val z = (calculate(Complex(cx, cy)) * 255).toInt()
+                val z: Int = (calculate(Complex(cx, cy))).toInt()
                 val r = z
                 val g = z
                 val b = z
@@ -28,22 +28,26 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
         }
     }
 
-    private fun calculate(p: Complex): Double {
+    private fun calculate(p: Complex): Double  {
         // Get the fractal function, e.g. Mandelbrot or Julia, for the given complex number
         val f = function.invoke(p)
-
         // Start with z0
         var z = f.z0()
         for (n in 0 until maxIterations) {
             // z(n) = z(n-1) ^ 2 + c
             z = z.multiply(z).add(f.c())
             if (z.abs() >= 4.0) {
-                return 1.0
+               return (maxIterations - n).toDouble()
             }
         }
         return 0.0
     }
 
+    /**
+     * The fractal function, e.g. for Mandebrot or Julia sets.
+     *
+     * The base formula is z(n+1) = z(n)^2 + c
+     */
     /**
      * The fractal function, e.g. for Mandebrot or Julia sets.
      *
@@ -81,8 +85,18 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
          *
          * @return The z(0).
          */
+        /**
+         * The z(0) in the formula z(n+1) = z(n)^2 + c
+         *
+         * @return The z(0).
+         */
         fun z0(): Complex
 
+        /**
+         * The constant c in the formula z(n+1) = z(n)^2 + c
+         *
+         * @return The constant c.
+         */
         /**
          * The constant c in the formula z(n+1) = z(n)^2 + c
          *
