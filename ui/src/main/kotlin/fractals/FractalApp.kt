@@ -5,7 +5,6 @@ import javafx.application.Application.launch
 import javafx.embed.swing.SwingFXUtils
 import javafx.geometry.Insets
 import javafx.scene.Scene
-import javafx.scene.canvas.Canvas
 import javafx.scene.control.Button
 import javafx.scene.image.WritableImage
 import javafx.scene.layout.VBox
@@ -13,7 +12,7 @@ import javafx.stage.Stage
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.javafx.JavaFx
 import kotlinx.coroutines.launch
 import java.nio.file.Files
@@ -25,24 +24,21 @@ fun main() {
 }
 
 class FractalApp : Application() {
-
+    
     @OptIn(DelicateCoroutinesApi::class)
     override fun start(primaryStage: Stage) {
 
-        val fractal = Fractal(Fractal.Function.MANDELBROT, 255, Complex(-1.5, 1.0), Complex(0.5, -1.0))
-        val canvas = Canvas(400.0, 400.0)
-        val channel = Channel<Fractal.Result>(canvas.height.toInt())
-        GlobalScope.launch(Dispatchers.JavaFx) {
-            fractal.applyToImage(canvas.width.toInt(), canvas.height.toInt()).collect {
-                channel.send(it)
-            }
-            channel.close()
-        }
+        val p1 = Complex(-1.5, 1.0)
+        val p2 = Complex(0.5, -1.0)
+        val fractal = Fractal(Fractal.Function.MANDELBROT, 255, p1, p2)
+        val canvas = OverlayCanvas(400.0, 400.0)
 
         GlobalScope.launch(Dispatchers.JavaFx) {
-            for (it in channel) {
-                canvas.graphicsContext2D.pixelWriter.setArgb(it.x, it.y, it.color)
-            }
+            fractal.applyToImage(canvas.width.toInt(), canvas.height.toInt())
+                    .buffer(canvas.height.toInt())
+                    .collect {
+                        canvas.graphicsContext2D.pixelWriter.setArgb(it.x, it.y, it.color)
+                    }
         }
 
         val button = Button("Save")
