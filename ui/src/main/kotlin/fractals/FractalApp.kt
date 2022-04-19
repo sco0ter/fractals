@@ -71,7 +71,7 @@ class FractalApp : Application() {
         primaryStage.centerOnScreen()
     }
 
-    private fun drawFractal(p1: Complex, p2: Complex, coloringAlgorithm:ColoringAlgorithm = NormalizedIterationCountAlgorithm()) {
+    private fun drawFractal(p1: Complex, p2: Complex, coloringAlgorithm:ColoringAlgorithm = ExponentialSmoothingAlgorithm()) {
         val fractal = Fractal(Fractal.Function.MANDELBROT, 255, colors, coloringAlgorithm, p1, p2)
         GlobalScope.launch(Dispatchers.JavaFx) {
             fractal.applyToImage(canvas.width.toInt(), canvas.height.toInt())

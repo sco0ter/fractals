@@ -4,7 +4,9 @@ import kotlinx.coroutines.flow.flow
 import kotlin.math.floor
 import kotlin.random.Random
 
-class Fractal(private val function: (p: Complex) -> Function, private val maxIterations: Int, private val colors: List<Int>, private val coloringAlgorithm: ColoringAlgorithm, private val p1: Complex, private val p2: Complex) {
+class Fractal(private val function: (p: Complex) -> Function, private val maxIterations: Int,
+              private val colors: List<Int>, private val coloringAlgorithm: ColoringAlgorithm, private val p1: Complex,
+              private val p2: Complex) {
 
     class Result internal constructor(val x: Int, val y: Int, val color: Int)
 
@@ -39,12 +41,15 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
         val f = function.invoke(p)
         // Start with z0
         var z = f.z0()
+        coloringAlgorithm.reset()
         for (n in 0 until maxIterations) {
             // z(n) = z(n-1) ^ 2 + c
             z = z.multiply(z).add(f.c())
             val zAbs = z.abs()
             if (zAbs >= 16) {
                 return coloringAlgorithm.getColorValue(n, zAbs)
+            } else {
+                coloringAlgorithm.increase(zAbs)
             }
         }
         return 0.0

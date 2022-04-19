@@ -27,4 +27,10 @@ interface ColoringAlgorithm {
      * @return
      */
     fun getColorValue(n: Int, zAbs: Double): Double
+
+    fun reset() {
+    }
+
+    fun increase(z: Double) {
+    }
 }
