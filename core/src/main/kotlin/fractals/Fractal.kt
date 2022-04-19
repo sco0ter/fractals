@@ -1,8 +1,10 @@
 package fractals
 
 import kotlinx.coroutines.flow.flow
+import kotlin.math.floor
+import kotlin.random.Random
 
-class Fractal(private val function: (p: Complex) -> Function, private val maxIterations: Int, private val p1: Complex, private val p2: Complex) {
+class Fractal(private val function: (p: Complex) -> Function, private val maxIterations: Int, private val colors: List<Int>, private val coloringAlgorithm: ColoringAlgorithm, private val p1: Complex, private val p2: Complex) {
 
     class Result internal constructor(val x: Int, val y: Int, val color: Int)
 
@@ -18,17 +20,21 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
 
             for (y in 0 until height) {
                 cy -= dy
-                val z: Int = (calculate(Complex(cx, cy))).toInt()
-                val r = z
-                val g = z
-                val b = z
-                val argb = (255 shl 24) or (r shl 16) or (g shl 8) or b
-                emit(Result(x, y, argb))
+                var z: Double = (calculate(Complex(cx, cy)))
+                if (z == 0.0) {
+                    emit(Result(x, y, 0xFF shl 24))
+                } else {
+                    // Factor for color density
+                    z *= 0.2
+                    val color1 = colors[floor(z).toInt() % colors.size]
+                    val color2 = colors[(floor(z).toInt() + 1) % colors.size]
+                    emit(Result(x, y, interpolate(color1, color2, z % 1)))
+                }
             }
         }
     }
 
-    private fun calculate(p: Complex): Double  {
+    private fun calculate(p: Complex): Double {
         // Get the fractal function, e.g. Mandelbrot or Julia, for the given complex number
         val f = function.invoke(p)
         // Start with z0
@@ -36,11 +42,41 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
         for (n in 0 until maxIterations) {
             // z(n) = z(n-1) ^ 2 + c
             z = z.multiply(z).add(f.c())
-            if (z.abs() >= 4.0) {
-               return (maxIterations - n).toDouble()
+            val zAbs = z.abs()
+            if (zAbs >= 16) {
+                return coloringAlgorithm.getColorValue(n, zAbs)
             }
         }
         return 0.0
+    }
+
+    companion object {
+        fun createColors(num: Int): List<Int> {
+
+            val colors: MutableList<Int> = mutableListOf()
+            for (i in 0 until num) {
+                val r: Int = (Random.nextDouble() * 255).toInt()
+                val g: Int = (Random.nextDouble() * 255).toInt()
+                val b: Int = (Random.nextDouble() * 255).toInt()
+                val argb = (255 shl 24) or (r shl 16) or (g shl 8) or b
+                colors.add(argb)
+            }
+            return colors
+        }
+
+        private fun interpolate(argb1: Int, argb2: Int, f: Double): Int {
+            val rf = 1 - f
+            val r1 = argb1 and 0x00FF0000 shr 16
+            val g1 = argb1 and 0x0000FF00 shr 8
+            val b1 = argb1 and 0x000000FF
+            val r2 = argb2 and 0x00FF0000 shr 16
+            val g2 = argb2 and 0x0000FF00 shr 8
+            val b2 = argb2 and 0x000000FF
+            val r = (r1 * rf + r2 * f).toInt()
+            val g = (g1 * rf + g2 * f).toInt()
+            val b = (b1 * rf + b2 * f).toInt()
+            return (255 shl 24) or (r shl 16) or (g shl 8) or b
+        }
     }
 
     /**

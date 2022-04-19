@@ -26,10 +26,11 @@ fun main() {
 
 @OptIn(DelicateCoroutinesApi::class)
 class FractalApp : Application() {
-    val canvas: OverlayCanvas = OverlayCanvas(400.0, 400.0)
+    private val canvas: OverlayCanvas = OverlayCanvas(400.0, 400.0)
 
     var p1 = Complex(-1.5, 1.0)
     var p2 = Complex(0.5, -1.0)
+    private val colors = Fractal.createColors(12)
 
     override fun start(primaryStage: Stage) {
 
@@ -70,14 +71,14 @@ class FractalApp : Application() {
         primaryStage.centerOnScreen()
     }
 
-    private fun drawFractal(p1: Complex, p2: Complex) {
-        val fractal = Fractal(Fractal.Function.MANDELBROT, 255, p1, p2)
+    private fun drawFractal(p1: Complex, p2: Complex, coloringAlgorithm:ColoringAlgorithm = NormalizedIterationCountAlgorithm()) {
+        val fractal = Fractal(Fractal.Function.MANDELBROT, 255, colors, coloringAlgorithm, p1, p2)
         GlobalScope.launch(Dispatchers.JavaFx) {
             fractal.applyToImage(canvas.width.toInt(), canvas.height.toInt())
-                .buffer(canvas.height.toInt())
-                .collect {
-                    canvas.graphicsContext2D.pixelWriter.setArgb(it.x, it.y, it.color)
-                }
+                    .buffer(canvas.height.toInt())
+                    .collect {
+                        canvas.graphicsContext2D.pixelWriter.setArgb(it.x, it.y, it.color)
+                    }
         }
     }
 }
