@@ -6,10 +6,11 @@ import kotlin.math.log10
  * A coloring algorithm that produces isocontours which are the same as the escape-time algorithm, if given the correct
  * parameters, yet it produces continuous values rather than discrete ones.
  *
- * <p>The formula for calculating the normalized iteration count is</p>
- * <pre>
- *     n + 1 − log(log zn) / log 2
- * </pre>
+ * The formula for calculating the normalized iteration count is
+ *
+ * ```
+ * n + 1 − log(log(zn)) / log(2)
+ * ```
  */
 class NormalizedIterationCountAlgorithm : ColoringAlgorithm {
 
