@@ -11,7 +11,7 @@ package fractals
  */
 class EscapeTimeAlgorithm : ColoringAlgorithm {
 
-    override fun getColorValue(n: Int, zAbs: Double): Double {
-        return n.toDouble()
+    override fun getColorValue(n: Int, zAbs: Double, z:Complex, nColors:Int): Double {
+        return n.toDouble() * 0.2
     }
 }

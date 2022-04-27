@@ -14,7 +14,7 @@ import kotlin.math.log10
  */
 class NormalizedIterationCountAlgorithm : ColoringAlgorithm {
 
-    override fun getColorValue(n: Int, zAbs: Double): Double {
-        return n + 1 - log10(log10(zAbs)) / log10(2.0)
+    override fun getColorValue(n: Int, zAbs: Double, z:Complex, nColors:Int): Double {
+        return (n + 1 - log10(log10(zAbs)) / log10(2.0)) * 0.2
     }
 }

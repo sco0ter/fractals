@@ -26,8 +26,6 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
                 if (z == 0.0) {
                     emit(Result(x, y, 0xFF shl 24))
                 } else {
-                    // Factor for color density
-                    z *= 0.2
                     val color1 = colors[floor(z).toInt() % colors.size]
                     val color2 = colors[(floor(z).toInt() + 1) % colors.size]
                     emit(Result(x, y, interpolate(color1, color2, z % 1)))
@@ -47,7 +45,7 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
             z = z.multiply(z).add(f.c())
             val zAbs = z.abs()
             if (zAbs >= 16) {
-                return coloringAlgorithm.getColorValue(n, zAbs)
+                return coloringAlgorithm.getColorValue(n, zAbs, z, colors.size)
             } else {
                 coloringAlgorithm.increase(zAbs)
             }

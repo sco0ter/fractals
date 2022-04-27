@@ -13,8 +13,8 @@ class ExponentialSmoothingAlgorithm : ColoringAlgorithm {
 
     var zSum: Double = 0.0
 
-    override fun getColorValue(n: Int, zAbs: Double): Double {
-        return zSum
+    override fun getColorValue(n: Int, zAbs: Double, z:Complex, nColors:Int): Double {
+        return zSum * 0.2
     }
 
     override fun reset() {
