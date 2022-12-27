@@ -11,7 +11,7 @@ package fractals
  * @see ContinuousDecompositionAlgorithm
  */
 class BinaryDecompositionAlgorithm : ColoringAlgorithm {
-    override fun getColorValue(n: Int, zAbs: Double, z: Complex, nColors: Int): Double {
+    override fun getColorValue(n: Int, maxIterations:Int, zAbs: Double, z: Complex, nColors: Int): Double {
         return (if (z.re / z.im > 0) 1.0 else 2.0)
     }
 }

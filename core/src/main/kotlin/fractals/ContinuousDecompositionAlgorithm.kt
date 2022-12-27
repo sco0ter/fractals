@@ -9,7 +9,7 @@ import kotlin.math.atan2
  * @see BinaryDecompositionAlgorithm
  */
 class ContinuousDecompositionAlgorithm : ColoringAlgorithm {
-    override fun getColorValue(n: Int, zAbs: Double, z: Complex, nColors: Int): Double {
+    override fun getColorValue(n: Int, maxIterations:Int, zAbs: Double, z: Complex, nColors: Int): Double {
         return (PI + atan2(z.re, z.im)) / (2 * PI) * nColors
     }
 }

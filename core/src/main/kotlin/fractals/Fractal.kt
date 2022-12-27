@@ -22,7 +22,7 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
 
             for (y in 0 until height) {
                 cy -= dy
-                var z: Double = (calculate(Complex(cx, cy)))
+                val z: Double = (calculate(Complex(cx, cy)))
                 if (z == 0.0) {
                     emit(Result(x, y, 0xFF shl 24))
                 } else {
@@ -40,17 +40,21 @@ class Fractal(private val function: (p: Complex) -> Function, private val maxIte
         // Start with z0
         var z = f.z0()
         coloringAlgorithm.reset()
+        var zAbs = 0.0
+        var i = 0
+
         for (n in 0 until maxIterations) {
+            i++
             // z(n) = z(n-1) ^ 2 + c
             z = z.multiply(z).add(f.c())
-            val zAbs = z.abs()
-            if (zAbs >= 16) {
-                return coloringAlgorithm.getColorValue(n, zAbs, z, colors.size)
-            } else {
-                coloringAlgorithm.increase(zAbs)
+            zAbs = z.abs()
+
+            if (coloringAlgorithm.isBailout(zAbs, z)) {
+                break
             }
+            coloringAlgorithm.increase(z)
         }
-        return 0.0
+        return coloringAlgorithm.getColorValue(i, maxIterations, zAbs, z, colors.size)
     }
 
     companion object {

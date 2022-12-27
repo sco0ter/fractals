@@ -11,6 +11,10 @@ data class Complex(val re: Double, val im: Double) {
         return Complex(re + z.re, im + z.im)
     }
 
+    fun subtract(z: Complex): Complex {
+        return Complex(re - z.re, im - z.im)
+    }
+
     fun multiply(z: Complex): Complex {
         val r: Double = re * z.re - im * z.im
         val i: Double = re * z.im + im * z.re

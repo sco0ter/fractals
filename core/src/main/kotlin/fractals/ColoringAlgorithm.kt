@@ -23,16 +23,19 @@ interface ColoringAlgorithm {
      * Gets the color value.
      *
      * @param n The iteration count
+     * @param maxIterations The max iterations
      * @param zAbs The absolute value of z, i.e. the distance.
      * @param z The complex number z.
      * @param nColors The number of colors.
      * @return
      */
-    fun getColorValue(n: Int, zAbs: Double, z: Complex, nColors: Int): Double
+    fun getColorValue(n: Int, maxIterations:Int, zAbs: Double, z: Complex, nColors: Int): Double
 
     fun reset() {
     }
 
-    fun increase(z: Double) {
+    fun increase(z: Complex) {
     }
+
+    fun isBailout(zAbs: Double, z: Complex): Boolean = zAbs >= 16
 }

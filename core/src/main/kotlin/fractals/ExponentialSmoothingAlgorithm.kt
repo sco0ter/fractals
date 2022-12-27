@@ -13,7 +13,7 @@ class ExponentialSmoothingAlgorithm : ColoringAlgorithm {
 
     var zSum: Double = 0.0
 
-    override fun getColorValue(n: Int, zAbs: Double, z:Complex, nColors:Int): Double {
+    override fun getColorValue(n: Int, maxIterations:Int, zAbs: Double, z:Complex, nColors:Int): Double {
         return zSum * 0.2
     }
 
@@ -21,7 +21,7 @@ class ExponentialSmoothingAlgorithm : ColoringAlgorithm {
         zSum = 0.0
     }
 
-    override fun increase(z: Double) {
-        zSum += exp(-z)
+    override fun increase(z: Complex) {
+        zSum += exp(-z.abs())
     }
 }
